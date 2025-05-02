@@ -7,10 +7,13 @@ class Settings(BaseSettings):
         "extra": "allow",
     }
 
-    rekognition_collection_id: str
     aws_region: str
     aws_access_key_id: str
     aws_secret_access_key: str
+
+    system_api_key: str
+
+    rekognition_collection_id: str
 
 
 settings = Settings()

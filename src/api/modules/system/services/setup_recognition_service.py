@@ -1,7 +1,6 @@
 from ....settings import settings
 import boto3
 
-COLLECTION_ID = settings.rekognition_collection_id
 
 rekognition = boto3.client(
     "rekognition",
@@ -11,15 +10,17 @@ rekognition = boto3.client(
 )
 
 
-async def create_collection():
-    response = rekognition.create_collection(CollectionId=COLLECTION_ID)
+async def create_collection(collection_id: str):
+    print(collection_id)
+
+    response = rekognition.create_collection(CollectionId=collection_id)
     return response
 
 
-async def index_faces(file, user_id):
+async def index_faces(file, user_id, collection_id: str):
     image_bytes = await file.read()
     response = rekognition.index_faces(
-        CollectionId=COLLECTION_ID,
+        CollectionId=collection_id,
         Image={"Bytes": image_bytes},
         ExternalImageId=user_id,
     )
