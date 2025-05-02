@@ -3,7 +3,7 @@
 # ──────────────────────────────────────────────────────────────────────────────
 
 # Use bash so multi-line rules share state
-SHELL := /usr/bin/env bash
+SHELL := bash
 .ONESHELL:
 .SHELLFLAGS := -eo pipefail -c
 

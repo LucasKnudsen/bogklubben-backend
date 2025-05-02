@@ -1,6 +1,8 @@
 import boto3
-import os
+import json
 from ....settings import settings
+from fastapi import HTTPException, UploadFile, File
+from ....shared import async_timer
 
 rekognition = boto3.client(
     "rekognition",
@@ -12,7 +14,16 @@ rekognition = boto3.client(
 COLLECTION_ID = settings.rekognition_collection_id
 
 
-async def face_login(file):
+@async_timer
+async def face_login(file: UploadFile = File(...)) -> str:
+    """
+    Args:
+        file: UploadFile - The image file to search for a face in.
+
+    Returns:
+        str - The user ID of the person in the image.
+    """
+
     image_bytes = await file.read()
 
     response = rekognition.search_faces_by_image(
@@ -22,5 +33,10 @@ async def face_login(file):
         MaxFaces=1,
     )
 
-    print(response)
-    return response
+    print(json.dumps(response, indent=2))
+
+    if response["FaceMatches"]:
+        user_id = response["FaceMatches"][0]["Face"]["ExternalImageId"]
+        return user_id
+
+    raise HTTPException(status_code=401, detail="No face matches found")
